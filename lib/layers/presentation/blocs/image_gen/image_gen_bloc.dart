@@ -1,5 +1,4 @@
-import 'dart:typed_data';
-
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:garment_demo_1/core/service_locator.dart';
 import 'package:garment_demo_1/layers/domain/image_gen/image_gen_repository.dart';
@@ -10,21 +9,20 @@ class ImageGenBloc extends Cubit<ImageGenState> {
 
   ImageGenBloc() : super(ImageGenState());
 
-  Future<void> generateImage({
-    Uint8List? image,
-  }) async {
+  Future<void> generateImage({Uint8List? image, String? prompt}) async {
     try {
       emit(ImageGenState(isLoading: true));
       final result = await repository.getGeminiImage(
         bytes: image,
-        prompt:
+        prompt: prompt ??
             'Generate creative variations of this garment, as real life photos.',
       );
       emit(ImageGenState(imageGenEntity: result));
     } catch (e) {
-      // Handle error, e.g., emit an error state or log the error
-      print('Error generating image: $e');
+      debugPrint('Error generating image: $e');
       emit(ImageGenState());
     }
   }
+
+  void reset() => emit(ImageGenState());
 }
